@@ -21,7 +21,7 @@
 
 ## 📸 Preview
 
-![Preview do app mostrando interface escura com opções de hardware](https://user-images.githubusercontent.com/gaaBa0/Hardware_Checker/preview.png)
+![Preview do app mostrando interface escura com opções de hardware](preview.png)
 
 ---
 
