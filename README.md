@@ -29,7 +29,7 @@
 
 1. Clone o repositório:
     ```bash
-    git clone https://github.com/seu-usuario/hardware-checker.git
+    git clone https://github.com/gaaBa0/hardware-checker.git
     cd hardware-checker
     ```
 
