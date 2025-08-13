@@ -8,13 +8,14 @@
 ## ✨ Funcionalidades
 
 - Exibe informações detalhadas do hardware:  
-  - Placa-mãe  
+  - Placa-mãe (Modelo, marca e S/N)
   - CPU (núcleos e threads)  
   - Memória RAM (capacidade, frequência e fabricante)  
   - GPU (nome e memória de vídeo)
 - Lista versões dos drivers instalados no sistema
 - Executa um script de ativação via PowerShell (com privilégios administrativos)
 - Salva versões dos drivers em arquivo `.txt` com timestamp
+- Atualiza os drivers da máquina
 - Interface gráfica escura, responsiva e agradável aos olhos
 
 ---
@@ -29,7 +30,7 @@
 
 1. Clone o repositório:
     ```bash
-    git clone https://github.com/gaaBa0/hardware-checker.git
+    git clone https://github.com/gaaBa0/hardware_checker.git
     cd hardware-checker
     ```
 
@@ -54,6 +55,7 @@
 - [CTkMessagebox](https://github.com/TomSchimansky/CustomTkinter/tree/master/CTkMessagebox) - mensagens estilizadas  
 - [wmi](https://github.com/tjguk/wmi) - acesso ao hardware Windows Management Instrumentation  
 - ctypes (módulo interno Python) - para executar comandos PowerShell com privilégios
+- time (módulo interno python)
 
 ---
 
@@ -68,7 +70,7 @@
 ## 📁 Estrutura do projeto
 
 ```
-hardware-checker/
+hardware_checker/
 ├── main.py
 ├── requirements.txt
 ├── icon.ico
