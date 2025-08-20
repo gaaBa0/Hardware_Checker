@@ -16,6 +16,7 @@
 - Executa um script de ativação via PowerShell (com privilégios administrativos)
 - Salva versões dos drivers em arquivo `.txt` com timestamp
 - Atualiza os drivers da máquina
+- Mostra portas abertas em diferentes estados
 - Interface gráfica escura, responsiva e agradável aos olhos
 
 ---
@@ -54,6 +55,7 @@
 - [customtkinter](https://github.com/TomSchimansky/CustomTkinter) - para a GUI moderna  
 - [CTkMessagebox](https://github.com/TomSchimansky/CustomTkinter/tree/master/CTkMessagebox) - mensagens estilizadas  
 - [wmi](https://github.com/tjguk/wmi) - acesso ao hardware Windows Management Instrumentation  
+- [psutil](https://github.com/giampaolo/psutil) - checagem de estado das portas
 - ctypes (módulo interno Python) - para executar comandos PowerShell com privilégios
 - time (módulo interno python)
 
@@ -74,6 +76,7 @@ hardware_checker/
 ├── main.py
 ├── requirements.txt
 ├── icon.ico
+├── tks.ico
 └── README.md
 ```
 

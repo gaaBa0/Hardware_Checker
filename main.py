@@ -3,6 +3,7 @@ from CTkMessagebox import CTkMessagebox
 import wmi
 import ctypes
 import time
+import psutil
 
 c = wmi.WMI()
 vistos = set()
@@ -12,7 +13,7 @@ commando2 = 'powershell -Command "Install-Module -Name PSWindowsUpdate -Force; I
 
 main = ctk.CTk(fg_color="#1A1A1A")
 main.title("Hardware Checker by Morningstar")
-main.iconbitmap(r"icon.ico")
+main.iconbitmap(r"Hardware_Checker\icon.ico")
 main.geometry("900x600")
 main.resizable(False, False)
 
@@ -45,7 +46,8 @@ Selecione sua opção abaixo:\n\n
 3. Rodar script de ativação
 4. Salvar versões de drivers em .txt
 5. Atualizar drivers
-6. Sair
+6. Verificar portas
+7. Sair
 """)
 text.configure(state="disabled")
 text.pack()
@@ -63,6 +65,33 @@ def write(event=None):
                 vistos.add(chave)
         file.close()
         CTkMessagebox(main, fg_color="#000000", bg_color="#000000", text_color="#F2F2F2", title="Arquivo gerado", message="Arquivo gerado com sucesso", button_color="#FFD700", button_hover_color="#FFD966", button_text_color="#1A1A1A")
+
+def ports(event=None):
+
+    text.configure(state="normal")
+    text.delete(0.0, "end")
+
+    connections = psutil.net_connections(kind='inet')
+
+    my_ports = [conn.laddr.port for conn in connections if conn.status == psutil.CONN_ESTABLISHED]
+
+    my_ports = list(set(my_ports))
+
+    my_ports.sort()
+
+    for port in my_ports:
+        text.insert("end", f"A porta TCP = {port}  está aberta e conectada.\n")
+
+    my_ports = [conn.laddr.port for conn in connections if conn.status == psutil.CONN_LISTEN]
+
+    my_ports = list(set(my_ports))
+
+    my_ports.sort()
+
+    for port in my_ports:
+        text.insert("end", f"A porta TCP = {port}  está aberta e esperando conexão.\n")
+
+    text.configure(state="disabled")
 
 def opcao(event=None):
     ans = entry.get()
@@ -144,6 +173,8 @@ def opcao(event=None):
                     1
                 )
             case 6:
+                ports()
+            case 7:
                 msg = CTkMessagebox(main, title="Adeus", option_1="Cancelar", option_3="Sair", fg_color="#000000", bg_color="#000000", text_color="#F2F2F2", title_color="#F2F2F2",message="Obrigado por usar meu script... Até a próxima!", button_color="#FFD700", button_hover_color="#FFD966", button_text_color="#1A1A1A", icon=r"tks.ico")
                 response = msg.get()
                 
@@ -161,7 +192,8 @@ def opcao(event=None):
 3. Rodar script de ativação
 4. Salvar versões de drivers em .txt
 5. Atualizar drivers
-6. Sair
+6. Verificar portas
+7. Sair
 """)
         text.configure(state="disabled")
     text.insert("end","""
@@ -171,7 +203,8 @@ def opcao(event=None):
 3. Rodar script de ativação
 4. Salvar versões de drivers em .txt
 5. Atualizar drivers
-6. Sair
+6. Verificar portas
+7. Sair
 """)
     text.configure(state="disabled")
 
