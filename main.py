@@ -175,7 +175,7 @@ def opcao(event=None):
             case 6:
                 ports()
             case 7:
-                msg = CTkMessagebox(main, title="Adeus", option_1="Cancelar", option_3="Sair", fg_color="#000000", bg_color="#000000", text_color="#F2F2F2", title_color="#F2F2F2",message="Obrigado por usar meu script... Até a próxima!", button_color="#FFD700", button_hover_color="#FFD966", button_text_color="#1A1A1A", icon=r"tks.ico")
+                msg = CTkMessagebox(main, title="Adeus", option_1="Cancelar", option_3="Sair", fg_color="#000000", bg_color="#000000", text_color="#F2F2F2", title_color="#F2F2F2",message="Obrigado por usar meu script... Até a próxima!", button_color="#FFD700", button_hover_color="#FFD966", button_text_color="#1A1A1A", icon=r"Hardware_Checker\tks.ico")
                 response = msg.get()
                 
                 if response == "Sair":
