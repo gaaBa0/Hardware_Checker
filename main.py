@@ -9,11 +9,11 @@ c = wmi.WMI()
 vistos = set()
 res = "N"
 commando = "irm https://get.activated.win | iex"
-commando2 = 'powershell -Command "Install-Module -Name PSWindowsUpdate -Force; Import-Module PSWindowsUpdate; Get-WindowsUpdate -Install -AcceptAll -IgnoreReboot"'
+commando2 = 'powershell -Command "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force; Install-Module PSWindowsUpdate -Force -Scope CurrentUser; Get-WindowsUpdate -Install -AcceptAll"'
 
 main = ctk.CTk(fg_color="#1A1A1A")
 main.title("Hardware Checker by Morningstar")
-main.iconbitmap(r"Hardware_Checker\icon.ico")
+main.iconbitmap(r"icon.ico")
 main.geometry("900x600")
 main.resizable(False, False)
 
@@ -94,98 +94,109 @@ def ports(event=None):
     text.configure(state="disabled")
 
 def opcao(event=None):
+    clear = "/clear"
     ans = entry.get()
     entry.delete(0, "end")
     text.configure(state="normal")
     text.delete(0.0, "end")
-    try:
-        ans = int(ans)
-        match ans:
-            case 1:
-                text.delete(0.0, "end")
-                for placa in c.Win32_Baseboard():
-                    text.insert("end",f"""
-┌─────────────────────────────────────────────────┐
-├Placa Mãe
-│    ├─── Nome: {placa.Product}
-│    ├─── Fabricante: {placa.Manufacturer}
-│    ├─── Serial Number: {placa.SerialNumber}
-└─────────────────────────────────────────────────┘
-""")
+    if ans is not clear:
+        try:
+            ans = int(ans)
+            match ans:
+                case 1:
+                    text.delete(0.0, "end")
+                    for placa in c.Win32_Baseboard():
+                        text.insert("end",f"""
+    ┌─────────────────────────────────────────────────┐
+    ├Placa Mãe
+    │    ├─── Nome: {placa.Product}
+    │    ├─── Fabricante: {placa.Manufacturer}
+    │    ├─── Serial Number: {placa.SerialNumber}
+    └─────────────────────────────────────────────────┘
+    """)
+                        
+                    for cpu in c.Win32_Processor():
+                        text.insert("end",f"""
+    ┌─────────────────────────────────────────────────┐
+    ├CPU                                                   
+    │    ├─── Nome: {cpu.Name}
+    │    ├─── Núcleos: {cpu.NumberOfCores}
+    │    ├─── Threads: {cpu.NumberOfLogicalProcessors}
+    └─────────────────────────────────────────────────┘
+    """)
+
+                    for mem in c.Win32_PhysicalMemory():
+                        tamanho_gb = int(mem.Capacity) / (1024**3)
+                        text.insert("end",f"""
+    ┌─────────────────────────────────────────────────┐
+    ├Memória RAM
+    │    ├─── Tamanho: {tamanho_gb:.0f} GB
+    │    ├─── Frequência: {mem.Speed} MHz
+    │    ├─── Fabricante: {mem.Manufacturer}
+    └─────────────────────────────────────────────────┘
+    """)
+
+                    for gpu in c.Win32_VideoController():
+                        text.insert("end",f"""
+    ┌─────────────────────────────────────────────────┐
+    ├GPU
+    │    ├─── Nome: {gpu.Name}
+    │    ├─── VRAM: {int(gpu.AdapterRAM) / (1024**2)}
+    └─────────────────────────────────────────────────┘
+    """)
                     
-                for cpu in c.Win32_Processor():
-                    text.insert("end",f"""
-┌─────────────────────────────────────────────────┐
-├CPU                                                   
-│    ├─── Nome: {cpu.Name}
-│    ├─── Núcleos: {cpu.NumberOfCores}
-│    ├─── Threads: {cpu.NumberOfLogicalProcessors}
-└─────────────────────────────────────────────────┘
-""")
-
-                for mem in c.Win32_PhysicalMemory():
-                    tamanho_gb = int(mem.Capacity) / (1024**3)
-                    text.insert("end",f"""
-┌─────────────────────────────────────────────────┐
-├Memória RAM
-│    ├─── Tamanho: {tamanho_gb:.0f} GB
-│    ├─── Frequência: {mem.Speed} MHz
-│    ├─── Fabricante: {mem.Manufacturer}
-└─────────────────────────────────────────────────┘
-""")
-
-                for gpu in c.Win32_VideoController():
-                    text.insert("end",f"""
-┌─────────────────────────────────────────────────┐
-├GPU
-│    ├─── Nome: {gpu.Name}
-│    ├─── VRAM: {int(gpu.AdapterRAM) / (1024**2)}
-└─────────────────────────────────────────────────┘
-""")
-                
-            case 2:
-                text.delete(1.0, "end")
-                for driver in c.Win32_PnPSignedDriver():
-                    chave = (driver.DeviceName, driver.DriverVersion)
-                    if chave not in vistos:
-                        text.insert("end",f"{driver.DeviceName} - {driver.DriverVersion}\n")
-                        vistos.add(chave)
-            case 3:
-                text.delete(0.0, "end")
-                text.insert("end", "\n...CARREGANDO SCRIPT DE ATIVAÇÃO...\n")
-                ctypes.windll.shell32.ShellExecuteW(
-                    None,           
-                    "runas",
-                    "powershell.exe",
-                    commando,
-                    None,
-                    1
-                )
-            case 4:
-                write()
-            case 5:
-                ctypes.windll.shell32.ShellExecuteW(
-                    None,           
-                    "runas",
-                    "powershell.exe",
-                    commando2,
-                    None,
-                    1
-                )
-            case 6:
-                ports()
-            case 7:
-                msg = CTkMessagebox(main, title="Adeus", option_1="Cancelar", option_3="Sair", fg_color="#000000", bg_color="#000000", text_color="#F2F2F2", title_color="#F2F2F2",message="Obrigado por usar meu script... Até a próxima!", button_color="#FFD700", button_hover_color="#FFD966", button_text_color="#1A1A1A", icon=r"Hardware_Checker\tks.ico")
-                response = msg.get()
-                
-                if response == "Sair":
-                    main.destroy()      
-                elif response == "Cancelar":
-                    msg.destroy() 
-                else:
-                    print("Click 'Yes' to exit!")
-    except:
-        text.insert("end","""
+                case 2:
+                    text.delete(1.0, "end")
+                    for driver in c.Win32_PnPSignedDriver():
+                        chave = (driver.DeviceName, driver.DriverVersion)
+                        if chave not in vistos:
+                            text.insert("end",f"{driver.DeviceName} - {driver.DriverVersion}\n")
+                            vistos.add(chave)
+                case 3:
+                    text.delete(0.0, "end")
+                    text.insert("end", "\n...CARREGANDO SCRIPT DE ATIVAÇÃO...\n")
+                    ctypes.windll.shell32.ShellExecuteW(
+                        None,           
+                        "runas",
+                        "powershell.exe",
+                        commando,
+                        None,
+                        1
+                    )
+                case 4:
+                    write()
+                case 5:
+                    try:
+                        ctypes.windll.shell32.ShellExecuteW(
+                            None,           
+                            "runas",
+                            "powershell.exe",
+                            commando2,
+                            None,
+                            1
+                        )
+                        text.delete(0.0, "end")
+                        text.insert("end", "\n...CARREGANDO SCRIPT DE ATUALIZAÇÃO...\n")
+                    except ValueError as e:
+                        text.delete(0.0, "end")
+                        text.insert("end", "\n...ERRO:...\n")
+                        text.insert("end", f"\n...{e}...\n")
+                case 6:
+                    ports()
+                    text.configure(state="normal")
+                    text.insert("end", "\n───────────────────────────────────────────────────\n\nDigite /clear para limpar o texto")
+                case 7:
+                    msg = CTkMessagebox(main, title="Adeus", option_1="Cancelar", option_3="Sair", fg_color="#000000", bg_color="#000000", text_color="#F2F2F2", title_color="#F2F2F2",message="Obrigado por usar meu script... Até a próxima!", button_color="#FFD700", button_hover_color="#FFD966", button_text_color="#1A1A1A", icon=r"tks.ico")
+                    response = msg.get()
+                    
+                    if response == "Sair":
+                        main.destroy()      
+                    elif response == "Cancelar":
+                        msg.destroy() 
+                    else:
+                        print("Click 'Yes' to exit!")
+        except:
+            text.insert("end","""
 \nSelecione sua opção abaixo:\n\n
 1. Visualizar especificações de hardware
 2. Visualizar versões de drivers
@@ -195,8 +206,10 @@ def opcao(event=None):
 6. Verificar portas
 7. Sair
 """)
-        text.configure(state="disabled")
-    text.insert("end","""
+            text.configure(state="disabled")
+    else:
+        text.delete(0.0, "end")
+        text.insert("end","""
 \nSelecione sua opção abaixo:\n\n
 1. Visualizar especificações de hardware
 2. Visualizar versões de drivers
